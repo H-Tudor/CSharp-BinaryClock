@@ -12,6 +12,9 @@ public class Program {
 		}
 	}
 
+	/// <summary>
+	/// A self-contained test based on the wikipedia binary clock example
+	/// </summary>
 	public static void MockTest_BinaryClock() {
 		/*		GOAL
 			j:	   0 1 2 3 4 5
@@ -27,6 +30,13 @@ public class Program {
 		else Console.WriteLine("Test Failed");
 	}
 
+	/// <summary>
+	/// Diplay the time with a binary clock
+	/// </summary>
+	/// <param name="time">The date in usual form (Y M D h m s)</param>
+	/// <param name="chars">The chars to be used by the display function</param>
+	/// <param name="dev">Switch for debugging and test running</param>
+	/// <returns>The output from the display function</returns>
 	public static string BinaryClock(DateTime time, string chars = " 01", bool dev = false) {
 		using(StringWriter stringWriter = new()) {
 			Console.SetOut(stringWriter);
@@ -46,6 +56,12 @@ public class Program {
 		}
 	}
 
+	/// <summary>
+	/// Displays the time transformed by 'TransformDate' as a Binary Clock where (from left to right) are the digits and from bottom to top are the powers of 2 (from 0 to 3)
+	/// </summary>
+	/// <param name="time">The time to be diplayed as arrays from the transform function</param>
+	/// <param name="arrayLengths">The lengths of the arrays from the transform function</param>
+	/// <param name="chars">The chars to be used to display null, false and true values from arrays</param>
 	public static void ClockDisplay(BitArray[] time, int[] arrayLengths, string chars = " 01") {
 		/*
 			reverse i-for to reverse up-down
@@ -64,6 +80,11 @@ public class Program {
 		}
 	}
 
+	/// <summary>
+	/// Transforms the hour, minute and second of a date in a Array of binary digits stored as BitArrays
+	/// </summary>
+	/// <param name="now">The date to be transformed</param>
+	/// <returns>A Tuple comprised of an Array of BitArrays and the Array of lengths of each BitArray</returns>
 	public static (BitArray[], int[]) TransformDate(DateTime now) {
 		int[] arraysLengths = new int[6];
 		BitArray[] now_BitArray = {
@@ -86,16 +107,27 @@ public class Program {
 		return (now_BitArray, arraysLengths);
 	}
 
+	/// <summary>
+	/// Conversion from base(10) 32-bit integer to a base(2) unsigned {{length}} bits long - use only for clock module as bits order is reversed
+	/// </summary>
+	/// <param name="number">The integer we want to convert</param>
+	/// <param name="length">The target length of the bit array</param>
+	/// <returns>The BitArray coresponding to the reversed number in binary</returns>
+	/// <exception cref="NotSupportedException">Number is to big, adjust length parameter</exception>
 	public static BitArray ConvertToUnsignedBinary(int number, int length) {
+		if(number < 0) throw new NotSupportedException("Number is negative, adjust number parameter");
+
 		int k = 0;
 		int initNumber = number;
 		BitArray toR = new BitArray(length);
 
-		while(number != 0) {
+		while(number != 0 && k < length) {
 			if(number % 2 == 1) toR[k] = true;
 			else toR[k] = false;
 			number /= 2; k++;
 		}
+		
+		if(k >= length) throw new NotSupportedException("Number is to big, adjust length parameter");
 
 		//	DEBUG
 		//Console.WriteLine($"k: {k}");
